@@ -203,6 +203,66 @@ describe("expire", function () {
 
 });
 
+describe("persist", function() {
+    it("should return 0 if key does not exist", function (done) {
+        var r = redismock.createClient("", "", "");
+        r.persist("test", function (err, result) {
+            result.should.equal(0);
+            r.end();
+            done();
+        });
+    });
+
+    it("should return 0 if key does not have an associated timeout", function (done) {
+        var r = redismock.createClient("", "", "");
+        r.set("test", "test", function (err, result) {
+            r.persist("test", function (err, result) {
+                result.should.equal(0);
+                r.del("test");
+                r.end();
+                done();
+            });
+        });
+    });
+
+    it("should return 1 if the timeout was removed", function (done) {
+        var r = redismock.createClient("", "", "");
+        r.set("test", "test", function (err, result) {
+            r.expire("test", 10, function (err, result) {
+                r.persist("test", function(err, result) {
+                    result.should.equal(1);
+                    r.del("test");
+                    r.end();
+                    done();
+                });
+            });
+        });
+    });
+
+    it("should prevent the key disappearing after the previously specified timeout", function (done) {
+        var r = redismock.createClient("", "", "");
+        r.set("test", "val", function (err, result) {
+            r.expire("test", 1, function (err, result) {
+                r.persist("test", function(err, result) {
+                    result.should.equal(1);
+
+                    setTimeout(function () {
+                        console.log("Waiting for expire...");
+                    }, 1000);
+
+                    setTimeout(function () {
+                        r.exists("test", function (err, result) {
+                            result.should.equal(1);
+                            r.end();
+                            done();
+                        });
+                    }, 2100);
+                });
+            });
+        });
+    });
+});
+
 describe("keys", function () {
 
     var r = redismock.createClient();
