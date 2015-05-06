@@ -48,6 +48,8 @@ Forked from https://github.com/faeldt/redis-mock, with more commands. Currently 
 * get
 * set
 * incr
+* incrb
+* incrbyfloat
 
 ## Hashing
 * hset
