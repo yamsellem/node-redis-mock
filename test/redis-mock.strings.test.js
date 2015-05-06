@@ -217,3 +217,183 @@ describe("setnx", function () {
 
     });
 });
+
+describe("incrby", function () {
+
+    it("should increment by value the number stored at key", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.set("foo", "10", function (err, result) {
+
+            r.incrby("foo", 2, function (err, result) {
+
+                result.should.eql(12);
+
+                r.get("foo", function (err, result) {
+
+                    result.should.eql("12");
+
+                    r.end();
+                    done();
+                });
+            });
+        });
+    });
+
+    it("should set 0 before performing if the key does not exist", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.incrbyfloat("bar", 2, function (err, result) {
+
+            result.should.eql(2);
+
+            r.get("bar", function (err, result) {
+
+                result.should.eql("2");
+
+                r.end();
+                done();
+            });
+        });
+    });
+
+    it("should return error if the key holds the wrong kind of value.", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.hset("foo", "bar", "baz", function (err, result) {
+
+            r.incrby("foo", 2, function (err, result) {
+
+                err.message.should.eql("ERR Operation against a key holding the wrong kind of value");
+
+                r.end();
+                done();
+            });
+        });
+    });
+
+    it("should return error if the key contains a string that can not be represented as number.", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.set("baz", "qux", function (err, result) {
+
+            r.incrby("baz", 2, function (err, result) {
+
+                err.message.should.equal("ERR value is not an integer or out of range");
+
+                r.end();
+                done();
+            });
+        });
+    });
+    
+    it("should return error if passed value contains a string that can not be represented as number.", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.set("baz", "10", function (err, result) {
+
+            r.incrby("baz", "qux", function (err, result) {
+
+                err.message.should.equal("ERR value is not an integer or out of range");
+
+                r.end();
+                done();
+            });
+        });
+    });
+});
+
+describe("incrbyfloat", function () {
+
+    it("should increment by value the number stored at key", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.set("foo", "10", function (err, result) {
+
+            r.incrbyfloat("foo", 0.1, function (err, result) {
+
+                result.should.eql(10.1);
+
+                r.get("foo", function (err, result) {
+
+                    result.should.eql("10.1");
+
+                    r.end();
+                    done();
+                });
+            });
+        });
+    });
+
+    it("should set 0 before performing if the key does not exist", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.incrbyfloat("bar", 0.1, function (err, result) {
+
+            result.should.eql(0.1);
+
+            r.get("bar", function (err, result) {
+
+                result.should.eql("0.1");
+
+                r.end();
+                done();
+            });
+        });
+    });
+
+    it("should return error if the key holds the wrong kind of value.", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.hset("foo", "bar", "baz", function (err, result) {
+
+            r.incrbyfloat("foo", 0.1, function (err, result) {
+
+                err.message.should.eql("ERR Operation against a key holding the wrong kind of value");
+
+                r.end();
+                done();
+            });
+        });
+    });
+
+    it("should return error if the key contains a string that can not be represented as float.", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.set("baz", "qux", function (err, result) {
+
+            r.incrbyfloat("baz", 0.1, function (err, result) {
+
+                err.message.should.equal("ERR value is not a valid float");
+
+                r.end();
+                done();
+            });
+        });
+    });
+    
+    it("should return error if passed value contains a string that can not be represented as float.", function (done) {
+
+        var r = redismock.createClient("", "", "");
+
+        r.set("baz", "0.1", function (err, result) {
+
+            r.incrbyfloat("baz", "qux", function (err, result) {
+
+                err.message.should.equal("ERR value is not a valid float");
+
+                r.end();
+                done();
+            });
+        });
+    });
+});
