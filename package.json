@@ -9,7 +9,7 @@
 		"url": "https://github.com/yamsellem/node-redis-mock.git"
 	},
 	"devDependencies": {
-		"should": "*",
+		"should": "3.3.2",
 		"mocha": "*",
 		"redis": "*"
 	},
