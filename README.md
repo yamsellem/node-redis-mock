@@ -1,3 +1,6 @@
+NO MAINTAINER: please take a look at [redis-js](https://github.com/wilkenstein/redis-mock-js) and [fakeredis](https://github.com/hdachev/fakeredis) or ask to be a repo collaborator 
+===============
+
 node-redis-mock
 ===============
 The goal of the node-redis-mock project is to create a feature-complete mock of https://github.com/mranney/node_redis, so that it may be used interchangeably when writing unit tests for code that depends on Redis.
